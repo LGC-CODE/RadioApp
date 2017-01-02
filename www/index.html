@@ -26,6 +26,8 @@
 		<!-- ionic/angularjs js -->
 		<script src="lib/ionic/js/ionic.bundle.js"></script>
 
+		<script src="https://cdn.jsdelivr.net/ngstorage/0.3.6/ngStorage.min.js"></script>
+
 		<!-- cordova script (this will be a 404 during development) -->
 		<script src="js/ng-cordova.js"></script>
 		<script src="cordova.js"></script>
@@ -42,23 +44,37 @@
 			<ion-header-bar class="bar bar-header bar-dark">
 				<h1 class="title">Tigre Sonidero - Radio</h1>
 			</ion-header-bar>
-			<ion-content ng-controller="mainCtrl">
+			<ion-content class="padding" ng-controller="mainCtrl">
 				<button ng-click="play('http://138.197.210.159:8000/stream.mp3')" class="button button-block button-outline button-assertive">Play Radio</button>
 				<button ng-click="stop()" class="button button-block button-dark">Stop Radio</button>
 				<div class="list">
 						<a ng-repeat="messages in message" class="item item-thumbnail-left item-text-wrap" href="#">
-							<img src="cover.jpg">
+							<img ng-src="{{ url }}">
 							<h2>From: {{ messages.fromUser}}</h2>
 							<p>{{ messages.text }}</p>
 						</a>
 				</div>
-				<div class="list">
-				    <label class="item item-input">
-				        <input type="text" placeholder="First Name">
-				    </label>
-				    <label class="item item-input">
-				        <input type="text" placeholder="Last Name">
-				    </label>
+				<div ng-hide="isLoggedIn" class="list padding">
+					<form ng-submit="register()">
+					    <label class="item item-input">
+					        <input type="text" ng-model="name" placeholder="Nombre">
+					    </label>
+					    <label>
+					        <ion-radio ng-model="gender" ng-value="'img/images.png'">Hombre</ion-radio>
+	 				 		<ion-radio ng-model="gender" ng-value="'img/ionic.png'">Mujer</ion-radio>
+	 				 		<ion-radio ng-model="gender" ng-value="'img/notsure.png'">Confundido</ion-radio>
+					    </label>
+					    <button type="submit" class="button button-small button-balanced button-full">Entrar a Chat</button>
+					</form>
+				</div>
+				<div ng-show="isLoggedIn" class="padding">
+					<form ng-submit="addMessage()">
+						<label class="item item-input">
+							<input type="text" ng-model="text" placeholder="Mensaje">
+						</label>
+						<button type="submit" class="button button-small button-balanced">Enviar</button>
+						<button ng-click="logOut()" class="button button-small button-balanced">Salir</button>
+					</form>
 				</div>
 			</ion-content>
 			<div class="bar bar-footer bar-dark">
