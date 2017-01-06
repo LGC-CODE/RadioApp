@@ -5,12 +5,16 @@ app.controller('mainCtrl', [
 	'socket', 
 	'$localStorage', 
 	'$location', 
-	 '$ionicScrollDelegate', function(
+	 '$ionicScrollDelegate',
+	 '$sce', function(
 	 	$scope, $ionicLoading, $cordovaMedia, socket, 
-	 	$localStorage, $location, $ionicScrollDelegate){
-  document.addEventListener('deviceready', function(){
+	 	$localStorage, $location, $ionicScrollDelegate, $sce){
+  
+
+	document.addEventListener('deviceready', function(){
 	  
 			var media = "";
+			var oneMinute = 1000 * 60;
 
 			$scope.appStatus = function(msg){
 
@@ -46,6 +50,32 @@ app.controller('mainCtrl', [
 					}
 			}
 
+			$scope.showAdSense = function(){
+
+		        $scope.adSenseString = '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' +
+								'<ins class="adsbygoogle"' +
+								     'style="display:block"'+
+								     'data-ad-client="ca-pub-3883039043389376"'+
+								     'data-ad-slot="1490853964"'+
+								     'data-ad-format="auto"></ins>'+
+								'<script>'+
+								'(adsbygoogle = window.adsbygoogle || []).push({});'+
+								'</script>';
+
+				setInterval(function(){
+					var el = document.createElement('a');
+
+					div.setAttribute('class', 'item item-thumbnail-left item-text-wrap');
+
+					el.innerHTML = '<img src="../img/amarillo.png">'+
+							'<h2>From: Radio Chat</h2>'+
+							'<div>' + $scope.adSenseString + '</div>';
+
+					document.getElementById('adSense').appendChild(el);
+
+				}, 3000);
+			}
+
 			$scope.startMedia = function(msg) {
 					media = new Media(
 						'http://138.197.210.159:8000/stream.mp3',
@@ -56,7 +86,9 @@ app.controller('mainCtrl', [
 			}
 	  
 			$scope.play = function(){
+
 			  $scope.startMedia('button clicked: playing...').play();
+
 			}
 	  
 			var appStatus =  function(progress){
@@ -78,10 +110,15 @@ app.controller('mainCtrl', [
 			}
 	  
 			$scope.stop = function(){
+
 				$scope.startMedia('button clicked: terminating audio').stop();
+
 			}
+
 			socket.emit('subscribe', roomType);
   });
+
+//iphone event listener =====================================>
 
   document.addEventListener('resign', function(){
   		cordova.plugins.backgroundMode.enable();
@@ -91,7 +128,9 @@ app.controller('mainCtrl', [
 				$scope.startMedia('apple audio active..').play();
 
 				$scope.stop = function(){
+
 				  	media.stop();
+
 				}
 
 				$scope.notifyUserOnActivate();
@@ -109,6 +148,7 @@ app.controller('mainCtrl', [
 			};
 
 			cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+
 				console.log(errorCode);
 			};
   });
@@ -120,7 +160,9 @@ app.controller('mainCtrl', [
 
 
   	document.addEventListener('pause',function(){
+
   		console.log('pause - eventListener triggered..');
+
   		cordova.plugins.backgroundMode.enable();
 
   		cordova.plugins.backgroundMode.onactivate = function() {
@@ -128,14 +170,17 @@ app.controller('mainCtrl', [
 				$scope.startMedia('starting android or apple audio..').play();
 
 				$scope.stop = function(){
+
 					$scope.startMedia('terminating audio on android').stop();
+
 				}
 
 				$scope.notifyUserOnActivate();
+		}
 
-			};
 		cordova.plugins.backgroundMode.ondeactivate = function(){
 			var performAction = confirm('Seguir Tocando Musica?');
+
 			if(performAction){
 				$scope.startMedia('User Approved Audio Playback').play();
 			} else {
@@ -152,11 +197,12 @@ app.controller('mainCtrl', [
 		cordova.plugins.backgroundMode.onfailure = function(errorCode) {
 			console.log(errorCode);
 			alert(errorCode);
-		};
+		}
 
   	})
 
   //Chat Application =============================================>
+  	//variables set here=====>
 
   	var roomType = 'Tigre Sonidero';
   	var username = {};
@@ -165,20 +211,31 @@ app.controller('mainCtrl', [
   	$scope.status = "";
   	$localStorage.person = "";
 
+  	//=======================>
+
   	if($localStorage.person.person){
+
   		$scope.isLoggedIn = true;
+
   	} else if($localStorage.person === "") {
+
   		$scope.isLoggedIn = false;
+
   	} else {
+
   		$scope.isLoggedIn = false;
+
   	}
 
   	function User(username, typeOfPerson){
+
 	   this.person = username;
+
 	   this.gender = typeOfPerson;
+
 	}
 
-  	socket.emit('subscribe', roomType);		//create room
+  	socket.emit('subscribe', roomType);		//join room
 
 	//create user with name and avatar
 
@@ -209,6 +266,8 @@ app.controller('mainCtrl', [
 
 		$scope.text = "";
 	};
+
+	//change name or log out
 
 	$scope.logOut = function(){
 		$localStorage.person = "";
