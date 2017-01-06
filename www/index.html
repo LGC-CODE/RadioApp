@@ -45,14 +45,23 @@
 				<h1 class="title">Tigre Sonidero - Radio</h1>
 			</ion-header-bar>
 			<ion-content class="padding" ng-controller="mainCtrl">
-				<button ng-click="play('http://138.197.210.159:8000/stream.mp3')" class="button button-block button-outline button-assertive">Play Radio</button>
+				<img width="100%" class="fullscreen-image" src="img/landingpage.jpg">
+				<button ng-click="play()" class="button button-block button-assertive">Play Radio</button>
 				<button ng-click="stop()" class="button button-block button-dark">Stop Radio</button>
+				<img width="100%" src="img/amarillo.png">
 				<div class="list">
+				<ion-scroll direction="y" delegate-handle="small" style=" height: 200px">
+						<a class="item item-thumbnail-left item-text-wrap" href="#">
+							<img src="./img/amarillo.png">
+							<h2>From: Radio Chat</h2>
+							<p>Bienvenidos al Chat de Tigre Sonidero</p>
+						</a>
 						<a ng-repeat="messages in message" class="item item-thumbnail-left item-text-wrap" href="#">
-							<img ng-src="{{ url }}">
+							<img ng-src="{{ messages.avatar }}">
 							<h2>From: {{ messages.fromUser}}</h2>
 							<p>{{ messages.text }}</p>
 						</a>
+				</ion-scroll>
 				</div>
 				<div ng-hide="isLoggedIn" class="list padding">
 					<form ng-submit="register()">
@@ -60,8 +69,8 @@
 					        <input type="text" ng-model="name" placeholder="Nombre">
 					    </label>
 					    <label>
-					        <ion-radio ng-model="gender" ng-value="'img/images.png'">Hombre</ion-radio>
-	 				 		<ion-radio ng-model="gender" ng-value="'img/ionic.png'">Mujer</ion-radio>
+					        <ion-radio ng-model="gender" ng-value="'img/hombre.png'">Hombre</ion-radio>
+	 				 		<ion-radio ng-model="gender" ng-value="'img/mujer.png'">Mujer</ion-radio>
 	 				 		<ion-radio ng-model="gender" ng-value="'img/notsure.png'">Confundido</ion-radio>
 					    </label>
 					    <button type="submit" class="button button-small button-balanced button-full">Entrar a Chat</button>
@@ -77,9 +86,9 @@
 					</form>
 				</div>
 			</ion-content>
-			<div class="bar bar-footer bar-dark">
+			<ion-footer-bar class="bar bar-footer bar-dark">
 				<div class="title">Radio</div>
-			</div>
+			</ion-footer-bar>
 		</ion-pane>
 	</body>
 </html>

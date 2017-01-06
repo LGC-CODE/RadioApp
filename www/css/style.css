@@ -1,1 +1,31 @@
 /* Empty. Add your own CSS if you like */
+.pane, .view {
+	background: url('../img/mic.png');
+	background-size: 10%;
+}
+
+.item {
+	border-color: #ddd;
+	background-color: #fffc;
+}
+
+.item p {
+	color: #D72323;
+}
+
+.button.button-dark.button-outline {
+	border-color: #FFF;
+	background: #0006;
+	color: #FFF;
+}
+
+.item-complex .item-content, .item-radio .item-content {
+	background-color: #fff3;
+}
+
+.fullscreen-image {
+    width: 100%;
+    height: 100%;
+	margin: 0;
+ 	overflow: auto;
+}

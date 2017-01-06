@@ -1,6 +1,6 @@
 app.factory('socket', function ($rootScope) {
 
-	var hostURL = 'msgstar.herokuapp.com';
+	var hostURL = 'http://rockstarim.luisconstante.com/';
 	var socket = io.connect(hostURL);
 	console.log(hostURL, '<<<<! host name ');
 	

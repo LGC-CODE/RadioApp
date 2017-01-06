@@ -1,27 +1,62 @@
-app.controller('mainCtrl', ['$scope', '$ionicLoading', '$cordovaMedia', 'socket', '$localStorage', function($scope, $ionicLoading, $cordovaMedia, socket, $localStorage){
+app.controller('mainCtrl', [
+	'$scope', 
+	'$ionicLoading', 
+	'$cordovaMedia', 
+	'socket', 
+	'$localStorage', 
+	'$location', 
+	 '$ionicScrollDelegate', function(
+	 	$scope, $ionicLoading, $cordovaMedia, socket, 
+	 	$localStorage, $location, $ionicScrollDelegate){
   document.addEventListener('deviceready', function(){
-	  function checkConnection() {
-		  var networkState = navigator.connection.type;
-
-		  var states = {};
-		  states[Connection.UNKNOWN]  = 'Unknown connection';
-		  states[Connection.ETHERNET] = 'Ethernet connection';
-		  states[Connection.WIFI]     = 'WiFi connection';
-		  states[Connection.CELL_2G]  = 'Cell 2G connection';
-		  states[Connection.CELL_3G]  = 'Cell 3G connection';
-		  states[Connection.CELL_4G]  = 'Cell 4G connection';
-		  states[Connection.CELL]     = 'Cell generic connection';
-		  states[Connection.NONE]     = 'No network connection';
-
-		  alert('Connection type: ' + states[networkState]);
-	  }
-
-			var media = "";
 	  
-			$scope.play = function(src){
-			  console.log(src);
-			  media = new Media(src, null, null, appStatus);
-			  media.play();
+			var media = "";
+
+			$scope.appStatus = function(msg){
+
+				console.log(msg);
+
+			}
+
+			$scope.notifyUserOnDeactivate = function (){
+				//notify users that current user has returned
+					if($localStorage.person.person){
+						socket.emit('send message', {			//send greeting data to server
+							room: roomType,
+							text: 'Regreso ' + $localStorage.person.person,
+							from: 'Radio Chat',
+							avatar: '../img/amarillo.png'
+						});
+					} else if(!$localStorage.person.person){
+						console.log('no user');
+					}
+			}
+
+			$scope.notifyUserOnActivate = function(){
+				//notify users that current user has left
+					if($localStorage.person.person){
+						socket.emit('send message', {			//send greeting data to server
+							room: roomType,
+							text: 'Salio ' + $localStorage.person.person,
+							from: 'Radio Chat',
+							avatar: '../img/amarillo.png'
+						});
+					} else if(!$localStorage.person.person){
+						console.log('no user');
+					}
+			}
+
+			$scope.startMedia = function(msg) {
+					media = new Media(
+						'http://138.197.210.159:8000/stream.mp3',
+			    		null, null, $scope.appStatus(msg)
+			    	);
+
+			    	return media;
+			}
+	  
+			$scope.play = function(){
+			  $scope.startMedia('button clicked: playing...').play();
 			}
 	  
 			var appStatus =  function(progress){
@@ -43,21 +78,98 @@ app.controller('mainCtrl', ['$scope', '$ionicLoading', '$cordovaMedia', 'socket'
 			}
 	  
 			$scope.stop = function(){
-			  media.stop();
-			  checkConnection();
+				$scope.startMedia('button clicked: terminating audio').stop();
 			}
+			socket.emit('subscribe', roomType);
   });
 
-  //Chat Application
+  document.addEventListener('resign', function(){
+  		cordova.plugins.backgroundMode.enable();
+
+			cordova.plugins.backgroundMode.onactivate = function() {
+
+				$scope.startMedia('apple audio active..').play();
+
+				$scope.stop = function(){
+				  	media.stop();
+				}
+
+				$scope.notifyUserOnActivate();
+
+			};
+
+			cordova.plugins.backgroundMode.ondeactivate = function() {
+				$scope.startMedia('turning off apple audio').stop();
+
+				console.log('stopped');
+
+				socket.emit('subscribe', roomType);		//join room
+
+				$scope.notifyUserOnDeactivate();
+			};
+
+			cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+				console.log(errorCode);
+			};
+  });
+
+
+
+  //android initial event listener ====================================>
+
+
+
+  	document.addEventListener('pause',function(){
+  		console.log('pause - eventListener triggered..');
+  		cordova.plugins.backgroundMode.enable();
+
+  		cordova.plugins.backgroundMode.onactivate = function() {
+
+				$scope.startMedia('starting android or apple audio..').play();
+
+				$scope.stop = function(){
+					$scope.startMedia('terminating audio on android').stop();
+				}
+
+				$scope.notifyUserOnActivate();
+
+			};
+		cordova.plugins.backgroundMode.ondeactivate = function(){
+			var performAction = confirm('Seguir Tocando Musica?');
+			if(performAction){
+				$scope.startMedia('User Approved Audio Playback').play();
+			} else {
+				$scope.startMedia('User Denied Audio Playback').stop();
+			}
+
+			$scope.notifyUserOnDeactivate();
+
+			$scope.stop = function(){
+				media.stop();
+			}
+		}
+
+		cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+			console.log(errorCode);
+			alert(errorCode);
+		};
+
+  	})
+
+  //Chat Application =============================================>
 
   	var roomType = 'Tigre Sonidero';
   	var username = {};
   	$scope.message = [];
+  	$scope.url = "";
   	$scope.status = "";
+  	$localStorage.person = "";
 
   	if($localStorage.person.person){
   		$scope.isLoggedIn = true;
   	} else if($localStorage.person === "") {
+  		$scope.isLoggedIn = false;
+  	} else {
   		$scope.isLoggedIn = false;
   	}
 
@@ -66,19 +178,23 @@ app.controller('mainCtrl', ['$scope', '$ionicLoading', '$cordovaMedia', 'socket'
 	   this.gender = typeOfPerson;
 	}
 
-  	socket.emit('subscribe', roomType);
-	socket.emit('send message', {			//send greeting data to server
-		room: roomType,
-		text: 'Bienvenidos al Chat de Tigre Sonidero',
-		from: 'Radio Chat'
-	});
+  	socket.emit('subscribe', roomType);		//create room
+
+	//create user with name and avatar
 
 	$scope.register = function(){
+
 		username = new User($scope.name, $scope.gender);
-		$localStorage.person = username;
-		$scope.isLoggedIn = true;
-		$scope.url = $localStorage.person.gender;
+
+		$localStorage.person = username; //save user to local storage
+
+		$scope.isLoggedIn = true; //log in user i.e. show the message input
+		
+		$scope.url = $localStorage.person.gender; //assign picture url
+
 	}
+
+	//create message
 
 	$scope.addMessage = function(){
 
@@ -87,7 +203,8 @@ app.controller('mainCtrl', ['$scope', '$ionicLoading', '$cordovaMedia', 'socket'
 		socket.emit('send message', { 
 			room: roomType,
 			text: $scope.text,
-			from: $localStorage.person.person
+			from: $localStorage.person.person,
+			avatar: $scope.url
 		});
 
 		$scope.text = "";
@@ -102,9 +219,12 @@ app.controller('mainCtrl', ['$scope', '$ionicLoading', '$cordovaMedia', 'socket'
 		$scope.message.push({
 			text: data.text,					//display text and name
 			fromUser: data.from,
-			room: data.room
+			room: data.room,
+			avatar: data.avatar
 	 	});
-	});
 
+		//Scroll Effect
+	 	$ionicScrollDelegate.$getByHandle('small').scrollBottom(true);
+	});
 
 }]);

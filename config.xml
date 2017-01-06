@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.tigreapp457793" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>TigreApp</name>
+  <name>Tigre Sonidero</name>
   <description>
         An Ionic Framework and Cordova project.
     </description>
@@ -79,5 +79,11 @@
   <allow-navigation href="http://172.20.10.8:8100"/>
   <allow-navigation href="http://192.168.1.14:8100"/>
   <allow-navigation href="http://192.168.1.14:8101"/>
+  <allow-navigation href="http://10.0.0.8:8100"/>
+  <allow-navigation href="http://192.168.10.116:8100"/>
+  <allow-navigation href="http://172.20.10.8:8101"/>
+  <allow-navigation href="http://172.20.10.8:8102"/>
+  <allow-navigation href="http://172.31.98.254:8101"/>
+  <allow-navigation href="http://172.31.98.254:8102"/>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>
