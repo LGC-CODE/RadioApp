@@ -16,7 +16,23 @@ app.controller('mainCtrl', [
 			var media = "";
 			var oneMinute = 1000 * 60;
 
-			$scope.appStatus = function(msg){
+			$scope.appStatus = function(status, msg){
+
+				if(status == 2){
+					$ionicLoading.show({ template: 'Cargando...!' });
+		  
+					setTimeout(function(){
+					    $ionicLoading.hide();
+					}, 1200);
+					
+				} else if(status == 4){
+					$ionicLoading.show({ template: 'Gracias por escuchar...' });
+
+					setTimeout(function(){
+					    $ionicLoading.hide();
+					}, 1200);
+
+				}
 
 				console.log(msg);
 
@@ -29,7 +45,7 @@ app.controller('mainCtrl', [
 							room: roomType,
 							text: 'Regreso ' + $localStorage.person.person,
 							from: 'Radio Chat',
-							avatar: '../img/amarillo.png'
+							avatar: './../img/amarillo.png'
 						});
 					} else if(!$localStorage.person.person){
 						console.log('no user');
@@ -43,43 +59,17 @@ app.controller('mainCtrl', [
 							room: roomType,
 							text: 'Salio ' + $localStorage.person.person,
 							from: 'Radio Chat',
-							avatar: '../img/amarillo.png'
+							avatar: './../img/amarillo.png'
 						});
 					} else if(!$localStorage.person.person){
 						console.log('no user');
 					}
 			}
 
-			$scope.showAdSense = function(){
-
-		        $scope.adSenseString = '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' +
-								'<ins class="adsbygoogle"' +
-								     'style="display:block"'+
-								     'data-ad-client="ca-pub-3883039043389376"'+
-								     'data-ad-slot="1490853964"'+
-								     'data-ad-format="auto"></ins>'+
-								'<script>'+
-								'(adsbygoogle = window.adsbygoogle || []).push({});'+
-								'</script>';
-
-				setInterval(function(){
-					var el = document.createElement('a');
-
-					div.setAttribute('class', 'item item-thumbnail-left item-text-wrap');
-
-					el.innerHTML = '<img src="../img/amarillo.png">'+
-							'<h2>From: Radio Chat</h2>'+
-							'<div>' + $scope.adSenseString + '</div>';
-
-					document.getElementById('adSense').appendChild(el);
-
-				}, 3000);
-			}
-
-			$scope.startMedia = function(msg) {
+			$scope.startMedia = function(status, msg) {
 					media = new Media(
 						'http://138.197.210.159:8000/stream.mp3',
-			    		null, null, $scope.appStatus(msg)
+			    		null, null, $scope.appStatus(status, msg)
 			    	);
 
 			    	return media;
@@ -87,31 +77,17 @@ app.controller('mainCtrl', [
 	  
 			$scope.play = function(){
 
-			  $scope.startMedia('button clicked: playing...').play();
+			  $scope.startMedia(2, 'button clicked: playing...').play();
 
 			}
 	  
-			var appStatus =  function(progress){
-				if(progress == 2){
-					$ionicLoading.show({ template: 'Cargando...!' });
-		  
-					setTimeout(function(){
-					  $ionicLoading.hide();
-				}, 1200);
-					
-				} else if(progress == 4){
-				$ionicLoading.show({ template: 'Gracias por escuchar...' });
-
-				setTimeout(function(){
-				  $ionicLoading.hide();
-				}, 1200);
-
-				}
+			var appStatus =  function(msg){
+				
 			}
 	  
 			$scope.stop = function(){
 
-				$scope.startMedia('button clicked: terminating audio').stop();
+				$scope.startMedia(4, 'button clicked: terminating audio').stop();
 
 			}
 
@@ -125,11 +101,11 @@ app.controller('mainCtrl', [
 
 			cordova.plugins.backgroundMode.onactivate = function() {
 
-				$scope.startMedia('apple audio active..').play();
+				$scope.startMedia( 2, 'apple audio active..').play();
 
 				$scope.stop = function(){
 
-				  	media.stop();
+				  	$scope.startMedia( 4, 'button clicked: terminating audio..').stop();
 
 				}
 
@@ -138,7 +114,7 @@ app.controller('mainCtrl', [
 			};
 
 			cordova.plugins.backgroundMode.ondeactivate = function() {
-				$scope.startMedia('turning off apple audio').stop();
+				$scope.startMedia( 4, 'turning off apple audio').stop();
 
 				console.log('stopped');
 
@@ -167,13 +143,7 @@ app.controller('mainCtrl', [
 
   		cordova.plugins.backgroundMode.onactivate = function() {
 
-				$scope.startMedia('starting android or apple audio..').play();
-
-				$scope.stop = function(){
-
-					$scope.startMedia('terminating audio on android').stop();
-
-				}
+				$scope.startMedia( 2, 'starting android or apple audio..').play();
 
 				$scope.notifyUserOnActivate();
 		}
@@ -182,15 +152,15 @@ app.controller('mainCtrl', [
 			var performAction = confirm('Seguir Tocando Musica?');
 
 			if(performAction){
-				$scope.startMedia('User Approved Audio Playback').play();
+				$scope.startMedia( 2, 'User Approved Audio Playback').play();
 			} else {
-				$scope.startMedia('User Denied Audio Playback').stop();
+				$scope.startMedia( 4, 'User Denied Audio Playback').stop();
 			}
 
 			$scope.notifyUserOnDeactivate();
 
 			$scope.stop = function(){
-				media.stop();
+				$scope.startMedia( 4, 'button clicked: stopping media').stop();
 			}
 		}
 
@@ -240,6 +210,26 @@ app.controller('mainCtrl', [
 	//create user with name and avatar
 
 	$scope.register = function(){
+
+		if(!$scope.name){ 
+			$scope.alert = "llena la seccion de nombre";
+
+			setTimeout(function(){
+				$scope.alert = false;  //hide alert
+			}, 5000);
+
+			return;	
+
+		} else if(!$scope.gender){
+			$scope.alert = "escoge una opcion de genero";
+
+			setTimeout(function(){
+				$scope.alert = false;  //hide alert
+			}, 5000);
+
+			return;	
+
+		}
 
 		username = new User($scope.name, $scope.gender);
 

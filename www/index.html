@@ -27,6 +27,7 @@
 		<script src="lib/ionic/js/ionic.bundle.js"></script>
 
 		<script src="https://cdn.jsdelivr.net/ngstorage/0.3.6/ngStorage.min.js"></script>
+		<script src="lib/angular-admob/angular-admob.js"></script>
 
 		<!-- cordova script (this will be a 404 during development) -->
 		<script src="js/ng-cordova.js"></script>
@@ -44,28 +45,29 @@
 			<ion-header-bar class="bar bar-header bar-dark">
 				<h1 class="title">Tigre Sonidero - Radio</h1>
 			</ion-header-bar>
-			<ion-content class="padding" ng-controller="mainCtrl">
+			<ion-content ng-controller="mainCtrl">
 				<img width="100%" class="fullscreen-image" src="img/landingpage.jpg">
 				<button ng-click="play()" class="button button-block button-assertive">Play Radio</button>
 				<button ng-click="stop()" class="button button-block button-dark">Stop Radio</button>
 				<img width="100%" src="img/amarillo.png">
 				<div class="list">
-				<ion-scroll direction="y" delegate-handle="small" style=" height: 200px">
-						<a class="item item-thumbnail-left item-text-wrap" href="#">
-							<img src="./img/amarillo.png">
-							<h2>From: Radio Chat</h2>
-							<p>Bienvenidos al Chat de Tigre Sonidero</p>
-						</a>
-						<a ng-repeat="messages in message" class="item item-thumbnail-left item-text-wrap" href="#">
-							<img ng-src="{{ messages.avatar }}">
-							<h2>From: {{ messages.fromUser}}</h2>
-							<p>{{ messages.text }}</p>
-						</a>
-						<a id="adSense" href="#">
-						</a>
-				</ion-scroll>
+					<ion-scroll direction="y" delegate-handle="small" style=" height: 200px">
+							<a class="item item-thumbnail-left item-text-wrap" href="#">
+								<img src="./img/amarillo.png">
+								<h2>From: Radio Chat</h2>
+								<p>Bienvenidos al Chat de Tigre Sonidero</p>
+							</a>
+							<a ng-repeat="messages in message" class="item item-thumbnail-left item-text-wrap" href="#">
+								<img ng-src="{{ messages.avatar }}">
+								<h2>From: {{ messages.fromUser}}</h2>
+								<p>{{ messages.text }}</p>
+							</a>
+							<a id="adSense" href="#">
+							</a>
+					</ion-scroll>
 				</div>
 				<div ng-hide="isLoggedIn" class="list padding">
+				<div ng-show="alert" class="col button button-assertive">{{ alert }}</div>
 					<form ng-submit="register()">
 					    <label class="item item-input">
 					        <input type="text" ng-model="name" placeholder="Nombre">
