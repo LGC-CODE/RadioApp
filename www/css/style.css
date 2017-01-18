@@ -6,7 +6,7 @@
 
 .item {
 	border-color: #ddd;
-	background-color: #fffc;
+	background-color: #fff;
 }
 
 .item p {
@@ -20,7 +20,7 @@
 }
 
 .item-complex .item-content, .item-radio .item-content {
-	background-color: #fff3;
+	background-color: #fff;
 }
 
 .fullscreen-image {
@@ -29,3 +29,39 @@
 	margin: 0;
  	overflow: auto;
 }
+
+
+.speaker-on {
+    position: relative;
+    -webkit-animation: mymove .3s infinite; /* Safari 4.0 - 8.0 */
+    animation: mymove .3s infinite;
+}
+
+.rotate3D {
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+}
+
+.button-size {
+    max-height: 90px !important;
+}
+
+/*animations =======================>*/
+
+@-moz-keyframes spin { 100% { -moz-transform: rotateY(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotateY(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotateY(360deg); transform:rotateY(360deg); } }
+
+@-webkit-keyframes mymove {
+    from {transform:scale(1.1,1.1);}
+    to {transform:scale(1.2,1.2);}
+}
+
+@keyframes mymove {
+    from {transform:scale(1.1,1.1);}
+    to {transform:scale(1.2,1.2);}
+}
+
+
+

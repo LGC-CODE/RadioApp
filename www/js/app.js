@@ -31,14 +31,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'ngStorage', 'admobMo
 					adId: admob_key.android,
 					position: AdMob.AD_SIZE.SMART_BANNER, 
               		autoShow: true,
-              		isTesting: true
+              		isTesting: false
 				});
 			} else if(device.platform == 'iOS'){
 				AdMob.createBanner({
 					adId: admob_key.ios,
 					position: AdMob.AD_SIZE.SMART_BANNER, 
               		autoShow: true,
-              		isTesting: true
+              		isTesting: false
 				});
 			}
 		} else {

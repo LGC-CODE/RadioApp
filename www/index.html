@@ -45,33 +45,52 @@
 			<ion-header-bar class="bar bar-header bar-dark">
 				<h1 class="title">Tigre Sonidero - Radio</h1>
 			</ion-header-bar>
-			<ion-content ng-controller="mainCtrl">
-				<img width="100%" class="fullscreen-image" src="img/landingpage.jpg">
-				<button ng-click="play()" class="button button-block button-assertive">Play Radio</button>
+			<ion-content delegate-handle="scrollpoint" ng-controller="mainCtrl">
+
+				<img ng-click="scrollToButtons()" width="100%" src="img/landingpage.jpg">
+
+				<div id="anchorPoint" class="row button-size">
+
+					<img id="speaker-left" class="col col-20" src="./img/speaker-bounce.png">
+
+					<button ng-click="play()" class="col col-60 button button-assertive">
+					
+						<span>Play Radio</span>			
+
+					</button>
+
+					<img id="speaker-right" class="col col-20" width="10%" src="./img/speaker-bounce.png">
+
+				</div>
+
 				<button ng-click="stop()" class="button button-block button-dark">Stop Radio</button>
-				<img width="100%" src="img/amarillo.png">
+
+				<img class="rotate3D" width="100%" src="img/amarillo.png">
+
 				<div class="list">
 					<ion-scroll direction="y" delegate-handle="small" style=" height: 200px">
 							<a class="item item-thumbnail-left item-text-wrap" href="#">
-								<img src="./img/amarillo.png">
+								<img class="rotate3D" src="./img/amarillo.png">
 								<h2>From: Radio Chat</h2>
 								<p>Bienvenidos al Chat de Tigre Sonidero</p>
 							</a>
 							<a ng-repeat="messages in message" class="item item-thumbnail-left item-text-wrap" href="#">
-								<img ng-src="{{ messages.avatar }}">
+								<img class="rotate3D" ng-src="{{ messages.avatar }}">
 								<h2>From: {{ messages.fromUser}}</h2>
 								<p>{{ messages.text }}</p>
 							</a>
-							<a id="adSense" href="#">
-							</a>
 					</ion-scroll>
 				</div>
-				<div ng-hide="isLoggedIn" class="list padding">
-				<div ng-show="alert" class="col button button-assertive">{{ alert }}</div>
+				<div ng-hide="isLoggedIn">
+					<div ng-show="alert" class="col button button-assertive">{{ alert }}</div>
+					<br>
 					<form ng-submit="register()">
-					    <label class="item item-input">
-					        <input type="text" ng-model="name" placeholder="Nombre">
-					    </label>
+						<div class="list">
+						    <label class="item item-input item-stacked-label">
+							   	<span class="input-label">Nombre</span>
+							    <input type="text" ng-model="name" placeholder="Aqui">
+							</label>
+						</div>
 					    <label>
 					        <ion-radio ng-model="gender" ng-value="'img/hombre.png'">Hombre</ion-radio>
 	 				 		<ion-radio ng-model="gender" ng-value="'img/mujer.png'">Mujer</ion-radio>
