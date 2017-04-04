@@ -7,9 +7,10 @@ app.controller('mainCtrl', [
 	'$location', 
 	'$ionicScrollDelegate',
 	'mediaFile',
+	'$http',
 	  function(
 		$scope, $ionicLoading, $cordovaMedia, socket, 
-		$localStorage, $location, $ionicScrollDelegate, mediaFile){
+		$localStorage, $location, $ionicScrollDelegate, mediaFile, $http){
   
 
 	document.addEventListener('deviceready', function(){
@@ -176,7 +177,7 @@ app.controller('mainCtrl', [
   //Chat Application =============================================>
 	//variables set here=====>
 
-	var roomType = 'Tigre Sonidero';
+	var roomType = 'ML';
 	var username = {};
 	$scope.message = [];
 	$scope.url = "";
@@ -184,6 +185,10 @@ app.controller('mainCtrl', [
 	$localStorage.person = "";
 
 	//=======================>
+
+	$http.get('http://104.236.186.74:3333/retrieve').success(function(data){
+		angular.copy(data, $scope.message);
+	});
 
 	if($localStorage.person.person){
 
@@ -257,6 +262,13 @@ app.controller('mainCtrl', [
 			room: roomType,
 			text: $scope.text,
 			from: $localStorage.person.person,
+			avatar: $scope.url
+		});
+
+		socket.create({
+			text: $scope.text,
+			fromUser: $localStorage.person.person,
+			room: roomType,
 			avatar: $scope.url
 		});
 

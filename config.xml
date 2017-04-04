@@ -7,7 +7,7 @@
   <author email="luisconstante@yahoo.com" href="http://luisconstante.com/">
       Luis Constante
     </author>
-  <content src="index.html"/>
+  <content src="http://10.0.1.105:8100" original-src="index.html"/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
@@ -85,5 +85,6 @@
   <allow-navigation href="http://172.31.98.254:8102"/>
   <allow-navigation href="http://172.31.98.142:8100"/>
   <allow-navigation href="http://10.0.1.96:8100"/>
+  <allow-navigation href="http://10.0.1.105:8100"/>
   <icon src="resources/ios/icon/icon-small@3x.png"/>
 </widget>

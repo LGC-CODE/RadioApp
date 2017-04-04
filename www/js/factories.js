@@ -1,6 +1,6 @@
-app.factory('socket', function ($rootScope) {
+app.factory('socket', '$http', function ($rootScope, $http) {
 
-	var hostURL = 'http://rockstarim.luisconstante.com/';
+	var hostURL = 'http://msgstar.herokuapp.com/';
 	var socket = io.connect(hostURL);
 	console.log(hostURL, '<<<<! host name ');
 	
@@ -21,7 +21,13 @@ app.factory('socket', function ($rootScope) {
 						callback.apply(socket, args);
 					}
 				});
-			})
+			});
+		},
+		create: function(data){
+			return $http.post('http://localhost:3333/create', data)
+				.success(function(res){
+					console.log(res.data);
+				});
 		}
 	};
 });
