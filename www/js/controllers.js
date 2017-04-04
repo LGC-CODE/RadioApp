@@ -18,7 +18,6 @@ app.controller('mainCtrl', [
 			var speakerLeft = document.getElementById('speaker-left');
 			var speakerRight = document.getElementById('speaker-right');
 			var audioMp3 = mediaFile.media();
-			var userChoice;
 			$scope.imgSrc = './img/amarillo.png';
 			console.log(mediaFile.msg);
 			console.log(ionic.Platform.platform());
@@ -72,11 +71,11 @@ app.controller('mainCtrl', [
 	  
 			$scope.play = function(){
 
+				mediaFile.successMsg(2, 'button clicked: starting audio...');
+
 				mediaFile.userChoice = true;
 
-				console.log( mediaFile.userChoice );
-
-				mediaFile.successMsg(2, 'button clicked: starting audio...');
+				console.log(mediaFile.userChoice, 'choice');
 
 				audioMp3.play();
 
@@ -86,108 +85,93 @@ app.controller('mainCtrl', [
 	  
 			$scope.stop = function(){
 
+				mediaFile.successMsg(4, 'button clicked: terminating audio...');
+
 				mediaFile.userChoice = false;
-
-				console.log( mediaFile.userChoice );
-
-				mediaFile.successMsg(4, 'button clicked: terminating audio... 1');
 
 				audioMp3.stop();
 
-				audioMp3.release();
+				if(ionic.Platform.platform() === 'android'){
+
+					audioMp3.release();
+
+				}
 
 				$scope.speakerOff();
 
 			}
 
 			socket.emit('subscribe', roomType);
+
+			cordova.plugins.backgroundMode.enable();	
+
+			cordova.plugins.backgroundMode.onactivate = function() {
+
+					// var audioMp3 = mediaFile.media();
+
+					console.log(mediaFile.userChoice , 'User Choice');
+
+
+					if(ionic.Platform.platform() === 'ios' && mediaFile.userChoice === true){
+
+						audioMp3.play();
+
+						$scope.speakerOn();
+
+					}
+
+					$scope.notifyUserOnActivate();
+			}
+
+			cordova.plugins.backgroundMode.ondeactivate = function(){
+				// var audioMp3 = mediaFile.media();
+
+				console.log('coming back...');
+				$scope.notifyUserOnDeactivate();
+
+				$scope.play = function(){
+
+					mediaFile.userChoice = true;
+
+					console.log(mediaFile.userChoice, 'choice on start');
+
+					audioMp3.play();
+
+					$scope.speakerOn();
+
+				}
+		  
+				$scope.stop = function(){
+
+					mediaFile.successMsg(4, 'button clicked: terminating audio...');
+
+					mediaFile.userChoice = false;
+
+					audioMp3.stop();
+
+					if(ionic.Platform.platform() === 'android'){
+
+						audioMp3.release();
+
+					}
+
+					$scope.speakerOff();
+
+				}
+
+			}
+
+			cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+				console.log(errorCode);
+			}
   });
 
 //iphone event listener =====================================>
 
-  // document.addEventListener('resign', function(){
-		// cordova.plugins.backgroundMode.enable();
-
-		// 	cordova.plugins.backgroundMode.onactivate = function() {
-
-		// 		$scope.startMedia( 2, 'apple audio active..').file.play();
-
-		// 		$scope.speakerOn();
-
-		// 		$scope.stop = function(){
-				
-		// 			$scope.startMedia( 4, 'button clicked: iphone terminating audio..').file.play();
-
-		// 			$scope.startMedia( 4, 'button clicked: iphone terminating audio..').file.stop();
-
-		// 		}
-
-		// 		$scope.notifyUserOnActivate();
-
-		// 	};
-
-							
-		// 	cordova.plugins.backgroundMode.ondeactivate = function() {
-		// 		$scope.startMedia( 4, 'turning off apple audio').file.stop();
-
-		// 		$scope.speakerOff();
-
-		// 		socket.emit('subscribe', roomType);		//join room
-
-		// 		$scope.notifyUserOnDeactivate();
-		// 	};
-
-		// 	cordova.plugins.backgroundMode.onfailure = function(errorCode) {
-
-		// 		console.log(errorCode);
-		// 	};
-  // });
 
 
 
   //android initial event listener ====================================>
-
-
-
-	document.addEventListener('pause',function(){
-
-		console.log('pause - eventListener triggered..');
-
-		var audioMp3 = mediaFile.media();
-
-		cordova.plugins.backgroundMode.enable();
-
-		cordova.plugins.backgroundMode.onactivate = function() {
-
-				console.log('started background');
-
-				console.log( mediaFile.userChoice );
-
-
-				if(ionic.Platform.platform() === 'ios' && mediaFile.userChoice === true){
-
-					audioMp3.play();
-					$scope.speakerOn();
-
-				} else if( mediaFile.userChoice === false ){
-
-					$scope.speakerOff();
-				}
-
-				$scope.notifyUserOnActivate();
-		}
-
-		cordova.plugins.backgroundMode.ondeactivate = function(){
-			console.log('coming back..');
-			$scope.notifyUserOnDeactivate();
-
-		}
-
-		cordova.plugins.backgroundMode.onfailure = function(errorCode) {
-			console.log(errorCode);
-		}
-
-	})
 
   //Chat Application =============================================>
 	//variables set here=====>
